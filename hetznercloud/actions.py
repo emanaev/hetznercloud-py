@@ -1,7 +1,7 @@
 import time
 
-from .constants import ACTION_STATUS_ERROR
-from .exceptions import HetznerWaitAttemptsExceededException, HetznerInternalServerErrorException
+from .constants import ACTION_STATUS_ERROR, ACTION_STATUS_RUNNING
+from .exceptions import HetznerWaitAttemptsExceededException, HetznerInternalServerErrorException, HetznerActionException
 from .shared import _get_results
 
 
@@ -10,7 +10,23 @@ def _get_action_json(config, id):
     return json["action"]
 
 class HetznerCloudActionsAction(object):
-    pass
+    def __init__(self, config):
+        self._config = config
+
+    def get_all(self, status=None):
+        status_code, results = _get_results(self._config, "actions", {'status': status} if not status is None else None)
+        if status_code != 200:
+            raise HetznerActionException(results)
+
+        for result in results["actions"]:
+            yield HetznerCloudAction._load_from_json(self._config, result)
+
+    def wait_until_empty(self):
+        actions = list(self.get_all(status=ACTION_STATUS_RUNNING))
+        while len(actions)>0:
+#            print([a.command for a in actions])
+            actions = list(self.get_all(status=ACTION_STATUS_RUNNING))
+            time.sleep(1)
 
 class HetznerCloudAction(object):
     """

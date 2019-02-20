@@ -90,6 +90,7 @@ class HetznerCloudServer(object):
         self.ingoing_traffic = 0
         self.included_traffic = 0
         self.root_password = ""
+        self.volumes = []
 
     def attach_iso(self, iso):
         if not iso:
@@ -318,5 +319,6 @@ class HetznerCloudServer(object):
         cloud_server.ingoing_traffic = int(json["ingoing_traffic"])
         cloud_server.included_traffic = int(json["included_traffic"])
         cloud_server.root_password = root_password
+        cloud_server.volumes = json["volumes"]
 
         return cloud_server
