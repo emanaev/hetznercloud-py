@@ -275,7 +275,7 @@ class HetznerCloudServer(object):
 
         return HetznerCloudAction._load_from_json(self._config, result["action"])
 
-    def wait_until_status_is(self, status, attempts=20, wait_seconds=1):
+    def wait_until_status_is(self, status, attempts=40, wait_seconds=1):
         """
         Sleeps the executing thread (a second each loop) until the status is either what the user requires or the
         attempt count is exceeded, in which case an exception is thrown.
