@@ -35,9 +35,6 @@ def _get_results(config, endpoint, url_params=None, body=None, method="GET"):
         js = request.json()
         if "action" in js and "error" in js["action"] and js["action"]["error"] is not None:
             raise HetznerActionException(js["action"]["error"])
-        if endpoint[-6:]=="attach":
-             print(json.dumps(body, indent=2, sort_keys=True))
-             print(json.dumps(js, indent=2, sort_keys=True))
 
         return request.status_code, js
     except json.decoder.JSONDecodeError:
